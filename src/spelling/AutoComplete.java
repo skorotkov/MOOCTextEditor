@@ -10,5 +10,5 @@ import java.util.List;
  *
  */
 public interface AutoComplete {
-	public List<String> predictCompletions(String prefix, int numCompletions);
+    public List<String> predictCompletions(String prefix, int numCompletions);
 }

@@ -18,52 +18,75 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     
 
     public AutoCompleteDictionaryTrie()
-	{
-		root = new TrieNode();
-	}
-	
-	
-	/** Insert a word into the trie.
-	 * For the basic part of the assignment (part 2), you should convert the 
-	 * string to all lower case before you insert it. 
-	 * 
-	 * This method adds a word by creating and linking the necessary trie nodes 
-	 * into the trie, as described outlined in the videos for this week. It 
-	 * should appropriately use existing nodes in the trie, only creating new 
-	 * nodes when necessary. E.g. If the word "no" is already in the trie, 
-	 * then adding the word "now" would add only one additional node 
-	 * (for the 'w').
-	 * 
-	 * @return true if the word was successfully added or false if it already exists
-	 * in the dictionary.
-	 */
-	public boolean addWord(String word)
-	{
-	    //TODO: Implement this method.
-	    return false;
-	}
-	
-	/** 
-	 * Return the number of words in the dictionary.  This is NOT necessarily the same
-	 * as the number of TrieNodes in the trie.
-	 */
-	public int size()
-	{
-	    //TODO: Implement this method
-	    return 0;
-	}
-	
-	
-	/** Returns whether the string is a word in the trie, using the algorithm
-	 * described in the videos for this week. */
-	@Override
-	public boolean isWord(String s) 
-	{
-	    // TODO: Implement this method
-		return false;
-	}
+    {
+        root = new TrieNode();
+    }
 
-	/** 
+
+    /** Insert a word into the trie.
+     * For the basic part of the assignment (part 2), you should convert the
+     * string to all lower case before you insert it.
+     *
+     * This method adds a word by creating and linking the necessary trie nodes
+     * into the trie, as described outlined in the videos for this week. It
+     * should appropriately use existing nodes in the trie, only creating new
+     * nodes when necessary. E.g. If the word "no" is already in the trie,
+     * then adding the word "now" would add only one additional node
+     * (for the 'w').
+     *
+     * @return true if the word was successfully added or false if it already exists
+     * in the dictionary.
+     */
+    public boolean addWord(String word)
+    {
+        String lowerCaseWord = word.toLowerCase();
+        TrieNode curr = root;
+        for (int i = 0; i < lowerCaseWord.length(); i++) {
+            TrieNode next = curr.insert(lowerCaseWord.charAt(i));
+            if (next == null) {
+                curr = curr.getChild(lowerCaseWord.charAt(i));
+            } else {
+                curr = next;
+            }
+            if (lowerCaseWord.equals(curr.getText()))
+                return false;
+        }
+        curr.setEndsWord(true);
+        size++;
+        return true;
+    }
+
+    /**
+     * Return the number of words in the dictionary.  This is NOT necessarily the same
+     * as the number of TrieNodes in the trie.
+     */
+    public int size()
+    {
+        return size;
+    }
+
+
+    /** Returns whether the string is a word in the trie, using the algorithm
+     * described in the videos for this week. */
+    @Override
+    public boolean isWord(String s)
+    {
+        String lowerCaseWord = s.toLowerCase();
+        TrieNode curr = root;
+        for (int i = 0; i < lowerCaseWord.length(); i++) {
+            if (lowerCaseWord.equals(curr.getText()))
+                return true;
+            TrieNode next = curr.insert(lowerCaseWord.charAt(i));
+            if (next == null) {
+                curr = curr.getChild(lowerCaseWord.charAt(i));
+            } else {
+                curr = next;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return a list, in order of increasing (non-decreasing) word length,
      * containing the numCompletions shortest legal completions 
      * of the prefix string. All legal completions must be valid words in the 
@@ -86,45 +109,45 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
      */@Override
      public List<String> predictCompletions(String prefix, int numCompletions) 
      {
-    	 // TODO: Implement this method
-    	 // This method should implement the following algorithm:
-    	 // 1. Find the stem in the trie.  If the stem does not appear in the trie, return an
-    	 //    empty list
-    	 // 2. Once the stem is found, perform a breadth first search to generate completions
-    	 //    using the following algorithm:
-    	 //    Create a queue (LinkedList) and add the node that completes the stem to the back
-    	 //       of the list.
-    	 //    Create a list of completions to return (initially empty)
-    	 //    While the queue is not empty and you don't have enough completions:
-    	 //       remove the first Node from the queue
-    	 //       If it is a word, add it to the completions list
-    	 //       Add all of its child nodes to the back of the queue
-    	 // Return the list of completions
-    	 
+         // TODO: Implement this method
+         // This method should implement the following algorithm:
+         // 1. Find the stem in the trie.  If the stem does not appear in the trie, return an
+         //    empty list
+         // 2. Once the stem is found, perform a breadth first search to generate completions
+         //    using the following algorithm:
+         //    Create a queue (LinkedList) and add the node that completes the stem to the back
+         //       of the list.
+         //    Create a list of completions to return (initially empty)
+         //    While the queue is not empty and you don't have enough completions:
+         //       remove the first Node from the queue
+         //       If it is a word, add it to the completions list
+         //       Add all of its child nodes to the back of the queue
+         // Return the list of completions
+
          return null;
      }
 
- 	// For debugging
- 	public void printTree()
- 	{
- 		printNode(root);
- 	}
- 	
- 	/** Do a pre-order traversal from this node down */
- 	public void printNode(TrieNode curr)
- 	{
- 		if (curr == null) 
- 			return;
- 		
- 		System.out.println(curr.getText());
- 		
- 		TrieNode next = null;
- 		for (Character c : curr.getValidNextCharacters()) {
- 			next = curr.getChild(c);
- 			printNode(next);
- 		}
- 	}
- 	
+    // For debugging
+    public void printTree()
+    {
+        printNode(root);
+    }
 
-	
+    /** Do a pre-order traversal from this node down */
+    public void printNode(TrieNode curr)
+    {
+        if (curr == null)
+            return;
+
+        System.out.println(curr.getText());
+
+        TrieNode next = null;
+        for (Character c : curr.getValidNextCharacters()) {
+            next = curr.getChild(c);
+            printNode(next);
+        }
+    }
+
+
+
 }
