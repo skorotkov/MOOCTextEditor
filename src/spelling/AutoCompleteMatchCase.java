@@ -1,21 +1,20 @@
 package spelling;
 
-import sun.awt.image.ImageWatched;
-
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /** 
  * An trie data structure that implements the Dictionary and the AutoComplete ADT
  * @author You
  *
  */
-public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
+public class AutoCompleteMatchCase implements  Dictionary, AutoComplete {
 
     private TrieNode root;
     private int size;
-    
 
-    public AutoCompleteDictionaryTrie()
+
+    public AutoCompleteMatchCase()
     {
         root = new TrieNode();
     }
@@ -37,12 +36,11 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
      */
     public boolean addWord(String word)
     {
-        String lowerCaseWord = word.toLowerCase();
         TrieNode curr = root;
-        for (int i = 0; i < lowerCaseWord.length(); i++) {
-            TrieNode next = curr.insert(lowerCaseWord.charAt(i));
+        for (int i = 0; i < word.length(); i++) {
+            TrieNode next = curr.insert(word.charAt(i));
             if (next == null) {
-                curr = curr.getChild(lowerCaseWord.charAt(i));
+                curr = curr.getChild(word.charAt(i));
             } else {
                 curr = next;
             }
@@ -167,10 +165,32 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     }
 
     private TrieNode find(String s) {
-        String lowerCaseWord = s.toLowerCase();
+        TrieNode node = exactFind(s);
+        if (node != null) {
+            return node;
+        } else if (s.isEmpty()) {
+            return null;
+        } else {
+            if (s.chars().allMatch(Character::isUpperCase)) {
+                node = exactFind(s.toLowerCase());
+                if (node != null)
+                    return node;
+                node = exactFind(s.substring(0, 1) + s.substring(1).toLowerCase());
+                if (node != null)
+                    return node;
+            } else if (Character.isUpperCase(s.charAt(0))) {
+                node = exactFind(s.substring(0, 1).toLowerCase() + s.substring(1));
+                if (node != null)
+                    return node;
+            }
+        }
+        return null;
+    }
+
+    private TrieNode exactFind(String s) {
         TrieNode curr = root;
-        for (int i = 0; i < lowerCaseWord.length(); i++) {
-            TrieNode next = curr.getChild(lowerCaseWord.charAt(i));
+        for (int i = 0; i < s.length(); i++) {
+            TrieNode next = curr.getChild(s.charAt(i));
             if (next == null) {
                 return null;
             } else {
